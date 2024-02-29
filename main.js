@@ -2,10 +2,10 @@ import headhunter from "./headhunter.js"
 import config from "config"
 
 const init = async () => {
-    const resumeHash = await headhunter.getResumeHash()
+    const resumeHashes = await headhunter.getResumeHashes()
     setInterval(async () => {
-        await headhunter.processBumping(resumeHash)
-    }, config.get('interval'))
+        await headhunter.processBumping(resumeHashes)
+    }, +config.get('checkInterval'))
 }
 
 init()

@@ -1,4 +1,5 @@
 {
   "token": "YourHHTokenGoesHere",
-  "interval": 20000
+  "checkInterval": 20000,
+  "bumpInterval": 3000
 }
