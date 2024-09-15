@@ -12,7 +12,7 @@ const getResumeHashes = async () => {
         const { data } = await axios.get('https://hh.ru/applicant/resumes', { headers: getHeaders() })
         const $ = cheerio.load(data)
         $('a[data-qa="resume-title-link"]').each(function () {
-            hashes.push($(this).attr('href').split('/resume/')[1].split('?')[0])
+            hashes.push($(this).attr('href')?.split('/resume/')[1]?.split('?')[0])
         });
         return hashes
     } catch (e) {
