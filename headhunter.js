@@ -11,8 +11,11 @@ const getResumeHashes = async () => {
         const hashes = []
         const { data } = await axios.get('https://hh.ru/applicant/resumes', { headers: getHeaders() })
         const $ = cheerio.load(data)
-        $('a[data-qa="resume-title-link"]').each(function () {
-            hashes.push($(this).attr('href')?.split('/resume/')[1]?.split('?')[0])
+        $('a[data-qa^="resume-card-link"]').each(function () {
+            const hash = $(this).attr('href')?.split('/resume/')[1]?.split('?')[0]
+            if (hash) {
+                hashes.push(hash)
+            }
         });
         return hashes
     } catch (e) {
@@ -26,7 +29,7 @@ const isResumeReadyToBeBumped = async (hash) => {
         const { data, headers } = await axios.get('https://hh.ru/applicant/resumes', { headers: getHeaders() })
         setXsrf(headers)
         const $ = cheerio.load(data)
-        return $(`[href*=${hash}]`).eq(0).closest('.applicant-resumes-card').find('button[data-qa="resume-update-button_actions"]').eq(0).text() === 'Поднять в поиске'
+        return $(`[href*=${hash}]`).eq(0).closest('[data-qa="resume"]').find('button[data-qa="resume-update-button_actions"]').eq(0).text() === 'Поднять в поиске'
     } catch (e) {
         console.log('Failed to check resume bump state.')
         console.log(e)
