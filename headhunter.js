@@ -46,11 +46,45 @@ const processBumping = async (hashes) => {
                 formData.append('undirectable', 'true')
                 await axios.post('https://hh.ru/applicant/resumes/touch', formData, { headers: getHeaders(xsrf) })
                 console.log('Bumped!')
-                await sleep(config.get('bumpInterval'))
+                await sleep(config.get('resumeBumper.bumpInterval'))
             }
         }
     } catch (e) {
         console.log('Failed to bump resume.')
+        console.log(e)
+    }
+}
+
+const getActivityScore = async () => {
+    try {
+        const { data } = await axios.get('https://hh.ru/', { headers: getHeaders() })
+        const $ = cheerio.load(data)
+        return +$(`[data-qa="activity-score"]`).eq(0).text().split('%')[0]
+    } catch (e) {
+        console.log('Failed to get activity score.')
+        console.log(e)
+    }
+}
+
+const getFirstVacancyId = async () => {
+    try {
+        const { data } = await axios.get('https://hh.ru/', { headers: getHeaders() })
+        const $ = cheerio.load(data)
+        return $('[data-qa*="vacancy-serp__vacancy"]').eq(0).find('[data-qa="serp-item__title"]').attr('href').split('/vacancy/')[1].split('?')[0]
+    } catch (e) {
+        console.log('Failed to get first vacancy id.')
+        console.log(e)
+    }
+}
+
+const viewVacancy = async (id) => {
+    try {
+        await axios.get(`https://hh.ru/vacancy/${id}?from=applicant_recommended&hhtmFrom=main`, { headers: getHeaders() })
+        console.log(`Viewed vacancy with id ${id}.`)
+    } catch (e) {
+        if (e.response.status === 404) {
+            return console.log(`Failed to view vacancy with id ${id}. It was deleted.`)
+        }
         console.log(e)
     }
 }
@@ -60,4 +94,4 @@ const setXsrf = (headers) => {
     xsrf = cookies.find(cookie => cookie.includes('_xsrf=')).split('_xsrf=')[1].split(';')[0]
 }
 
-export default { getResumeHashes, processBumping }
+export default { getResumeHashes, processBumping, getActivityScore, getFirstVacancyId, viewVacancy }

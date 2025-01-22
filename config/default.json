@@ -1,5 +1,12 @@
 {
   "token": "YourHHTokenGoesHere",
-  "checkInterval": 20000,
-  "bumpInterval": 3000
+  "resumeBumper": {
+    "enabled": true,
+    "checkInterval": 20000,
+    "bumpInterval": 3000
+  },
+  "activityBoost": {
+    "enabled": true,
+    "checkInterval": 10000
+  }
 }
