@@ -29,7 +29,7 @@ const isResumeReadyToBeBumped = async (hash) => {
         const { data, headers } = await axios.get('https://hh.ru/applicant/resumes', { headers: getHeaders() })
         setXsrf(headers)
         const $ = cheerio.load(data)
-        return $(`[href*=${hash}]`).eq(0).closest('[data-qa="resume"]').find('button[data-qa="resume-update-button_actions"]').eq(0).text() === 'Поднять в поиске'
+        return $(`[href*=${hash}]`).eq(0).closest('[data-qa="resume"]').find('button[data-qa*="resume-update-button_actions"]').eq(0).text() === 'Поднять в поиске'
     } catch (e) {
         console.log('Failed to check resume bump state.')
         console.log(e)
